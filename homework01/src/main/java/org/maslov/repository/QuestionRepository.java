@@ -1,4 +1,9 @@
 package org.maslov.repository;
 
-public class QuestionRepository {
+import org.maslov.model.Question;
+
+import java.util.List;
+
+public interface QuestionRepository {
+    List<Question> findAll();
 }
