@@ -14,7 +14,6 @@ public class QuestionService {
     }
 
     public List<Question> findAll() {
-        System.out.println("Hello from getQuestions");
-        return null;
+        return questionRepository.findAll();
     }
 }

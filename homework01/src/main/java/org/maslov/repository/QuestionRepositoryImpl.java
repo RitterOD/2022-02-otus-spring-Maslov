@@ -2,40 +2,29 @@ package org.maslov.repository;
 
 import com.opencsv.CSVReader;
 import org.maslov.model.Question;
+import org.maslov.util.CsvLoader;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Repository;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class QuestionRepositoryImpl implements QuestionRepository{
 
+    private final CsvLoader loader;
+
+    public QuestionRepositoryImpl(CsvLoader loader) {
+        this.loader = loader;
+    }
+
     public List<Question> findAll() {
-        return null;
+        return loader.findAll();
     }
 
 
-    private static List<String[]> readAll(Reader reader) throws Exception {
-        CSVReader csvReader = new CSVReader(reader);
-        List<String[]> list;
-        list = csvReader.readAll();
-        reader.close();
-        csvReader.close();
-        return list;
-    }
 
-    public static void main(String[] args) throws Exception {
-            InputStream resource = new ClassPathResource(
-                    "questions.csv").getInputStream();
-            try ( BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(resource)) ) {
-                List<String[]> rv = readAll(reader);
-                for(String[] line: rv) {
-                    for(String val: line) {
-                        System.out.println(val + " ");
-                    }
-                    System.out.println();
-                }
-            }
-    }
+
+
 }

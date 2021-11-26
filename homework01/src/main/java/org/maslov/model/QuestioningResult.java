@@ -8,7 +8,22 @@ public class QuestioningResult {
         this.questionNumber = questionNumber;
     }
 
-    void incrementRightAnswersNumber() {
+    public int getQuestionNumber() {
+        return questionNumber;
+    }
+
+    public int getRightAnswersNumber() {
+        return rightAnswersNumber;
+    }
+
+    public void incrementRightAnswersNumber() {
         ++rightAnswersNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "Your question result: " +
+                rightAnswersNumber + " right answers from " + questionNumber
+                + " questions";
     }
 }
