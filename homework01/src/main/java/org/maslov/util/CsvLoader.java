@@ -20,9 +20,9 @@ public class CsvLoader implements QuestionRepository {
     }
 
     private List<String[]> readAll() throws IOException {
-        InputStream resource = null;
 
-            resource = new ClassPathResource(classPathResource).getInputStream();
+
+        InputStream resource = new ClassPathResource(classPathResource).getInputStream();
             try (BufferedReader reader = new BufferedReader(
                     new InputStreamReader(resource))) {
                 CSVReader csvReader = new CSVReader(reader);
@@ -30,12 +30,6 @@ public class CsvLoader implements QuestionRepository {
                 list = csvReader.readAll();
                 reader.close();
                 csvReader.close();
-//            for (String[] line : list) {
-//                for (String val : line) {
-//                    System.out.println(val + " ");
-//                }
-//                System.out.println();
-//            }
                 return list;
             } catch (IOException e) {
                 throw e;
@@ -43,14 +37,27 @@ public class CsvLoader implements QuestionRepository {
 
     }
 
-    private static Question mapCsvRepresentationToQuestion(String[] csvRep) throws IOException
-    {
+    public static Question mapCsvRepresentationToQuestion(String[] csvRep) throws IOException {
         Question rv = new Question();
-        rv.setQuestionText(csvRep[1]);
-        rv.setRightAnswerInd(Integer.parseInt(csvRep[csvRep.length - 1].trim()));
-        List<String> answers = IntStream.range(2, csvRep.length - 1).mapToObj(i -> csvRep[i].trim())
-                .collect(Collectors.toList());
-        rv.setAnswers(answers);
+        try {
+            rv.setQuestionText(csvRep[1]);
+
+            int rightAnswerInd = 0;
+
+            rightAnswerInd = Integer.parseInt(csvRep[csvRep.length - 1].trim());
+            rv.setRightAnswerInd(rightAnswerInd);
+
+            List<String> answers = IntStream.range(2, csvRep.length - 1).mapToObj(i -> csvRep[i].trim())
+                    .collect(Collectors.toList());
+            if (answers.size() <= rightAnswerInd || rightAnswerInd < 0) {
+                throw new IOException("Wrong value of right answer field inside csv file");
+            }
+            rv.setAnswers(answers);
+        } catch (NumberFormatException e) {
+            throw new IOException("Wrong right answer field format inside csv file", e);
+        } catch (IndexOutOfBoundsException e) {
+            throw new IOException("During loading csv file", e);
+        }
         return rv;
     }
 
