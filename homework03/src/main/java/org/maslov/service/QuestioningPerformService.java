@@ -2,10 +2,12 @@ package org.maslov.service;
 
 import org.maslov.model.Question;
 import org.maslov.model.QuestioningResult;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Scanner;
 
+@Service
 public class QuestioningPerformService {
 
     private final QuestionService questionService;
