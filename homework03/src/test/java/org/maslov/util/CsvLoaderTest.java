@@ -1,59 +1,49 @@
 package org.maslov.util;
 
+import org.junit.Assert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.maslov.configuration.AppProperties;
+import org.maslov.model.Question;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.io.IOException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@SpringBootTest
+@ActiveProfiles("test")
 class CsvLoaderTest {
 
+    @Autowired
     CsvLoader loader;
 
-    @BeforeAll
-    void initCsvLoader(){
-        // FIXME after start using spring boot test
-        //loader = new CsvLoader("./src/main/resources/test_question.csv");
+    @Autowired
+    AppProperties appProperties;
+
+
+
+    @Test
+    public void checkLoadAll() {
+        List<Question> lst = loader.findAll();
+        Assert.assertEquals(lst.size(), 10);
     }
 
 
     @Test
-    void checkNullPointer() {
-        assertThrows(NullPointerException.class, () -> {loader.mapCsvRepresentationToQuestion(null);});
+    public void checkLoadRu() {
+        List<Question> lst = loader.findAllByLocaleCode(AppConstants.CODE_LOCALE_RU);
+        Assert.assertEquals(lst.size(), 5);
     }
 
     @Test
-    void wrongRightAnswerFieldFormat(){
-        String[] testData = {
-                "1",
-                " What is the year of Russian empire foundation?",
-                " 1720",
-                " 1721",
-                " 1722",
-                " 1723",
-                " la",
-        };
-        Throwable e =assertThrows(IOException.class, () -> {loader.mapCsvRepresentationToQuestion(testData);});
-        assertEquals("Wrong right answer field format inside csv file", e.getMessage());
-
+    public void checkLoadEn() {
+        List<Question> lst = loader.findAllByLocaleCode(AppConstants.CODE_LOCALE_EN);
+        Assert.assertEquals(lst.size(), 5);
     }
 
-
-    @Test
-    void wrongRightAnswerFieldValue(){
-        String[] testData = {
-                "1",
-                " What is the year of Russian empire foundation?",
-                " 1720",
-                " 1721",
-                " 1722",
-                " 1723",
-                " 1000",
-        };
-        Throwable e =assertThrows(IOException.class, () -> {loader.mapCsvRepresentationToQuestion(testData);});
-        assertEquals("Wrong value of right answer field inside csv file", e.getMessage());
-    }
 }
