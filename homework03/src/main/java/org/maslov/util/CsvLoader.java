@@ -1,6 +1,7 @@
 package org.maslov.util;
 
 import com.opencsv.CSVReader;
+import org.maslov.configuration.AppProperties;
 import org.maslov.model.Question;
 import org.maslov.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,10 +20,12 @@ import java.util.stream.IntStream;
 @Service
 public class CsvLoader implements QuestionRepository {
 
-    private String classPathResource;
+    private final String classPathResource;
+    private final AppProperties appProperties;
 
-    public CsvLoader(@Value("${question.source}") String classPathResource) {
-        this.classPathResource = classPathResource;
+    public CsvLoader(AppProperties appProperties) {
+        this.appProperties = appProperties;
+        this.classPathResource = appProperties.getSource();
     }
 
     private List<String[]> readAll() throws IOException {

@@ -16,7 +16,7 @@ class CsvLoaderTest {
     @BeforeAll
     void initCsvLoader(){
         // FIXME after start using spring boot test
-        loader = new CsvLoader("./src/main/resources/test_question.csv");
+        //loader = new CsvLoader("./src/main/resources/test_question.csv");
     }
 
 
