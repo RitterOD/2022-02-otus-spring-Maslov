@@ -2,8 +2,12 @@ package org.maslov.service;
 
 import org.maslov.model.Question;
 import org.maslov.model.QuestioningResult;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.List;
 import java.util.Scanner;
 
@@ -14,11 +18,18 @@ public class QuestioningPerformService {
 
     private final QuestionService questionService;
     private final MessageSourceService messageSourceService;
+    public final InputStream in;
+    public final PrintStream out;
 
 
-    public QuestioningPerformService(MessageSourceService messageSourceService, QuestionService questionService) {
+
+    public QuestioningPerformService(MessageSourceService messageSourceService, QuestionService questionService,
+                                     @Qualifier("systemIN") InputStream in,
+                                     @Qualifier("systemOut") PrintStream out) {
         this.messageSourceService = messageSourceService;
         this.questionService = questionService;
+        this.in = in;
+        this.out = out;
     }
 
 
@@ -47,8 +58,6 @@ public class QuestioningPerformService {
         System.out.println(messageSourceService.getMessage("result",
                 new Object[]{questioningResult.getRightAnswersNumber(),
                         questioningResult.getQuestionNumber()}));
-        printToSystemOut(questioningResult);
-
     }
 
 }
