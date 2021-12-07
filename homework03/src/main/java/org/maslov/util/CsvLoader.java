@@ -21,10 +21,9 @@ import java.util.stream.IntStream;
 public class CsvLoader implements QuestionRepository {
 
     private final String classPathResource;
-    private final AppProperties appProperties;
+
 
     public CsvLoader(AppProperties appProperties) {
-        this.appProperties = appProperties;
         this.classPathResource = appProperties.getSource();
     }
 
@@ -49,14 +48,15 @@ public class CsvLoader implements QuestionRepository {
     public static Question mapCsvRepresentationToQuestion(String[] csvRep) throws IOException {
         Question rv = new Question();
         try {
-            rv.setQuestionText(csvRep[1]);
+            rv.setLocaleCode(csvRep[1].trim());
+            rv.setQuestionText(csvRep[2]);
 
             int rightAnswerInd = 0;
 
             rightAnswerInd = Integer.parseInt(csvRep[csvRep.length - 1].trim());
             rv.setRightAnswerInd(rightAnswerInd);
 
-            List<String> answers = IntStream.range(2, csvRep.length - 1).mapToObj(i -> csvRep[i].trim())
+            List<String> answers = IntStream.range(3, csvRep.length - 1).mapToObj(i -> csvRep[i].trim())
                     .collect(Collectors.toList());
             if (answers.size() <= rightAnswerInd || rightAnswerInd < 0) {
                 throw new IOException("Wrong value of right answer field inside csv file");
@@ -84,5 +84,22 @@ public class CsvLoader implements QuestionRepository {
         }
 
 
+    }
+
+    @Override
+    public List<Question> findAllByLocaleCode(String localeCode) {
+        List<Question> rv = new ArrayList<>();
+        try {
+            List<String[]> readed = readAll();
+            for(String[] rep: readed) {
+                Question q = mapCsvRepresentationToQuestion(rep);
+                if (q.getLocaleCode().equals(localeCode)) {
+                    rv.add(q);
+                }
+            }
+            return rv;
+        } catch (IOException e) {
+            return rv;
+        }
     }
 }

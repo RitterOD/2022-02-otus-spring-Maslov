@@ -18,4 +18,8 @@ public class QuestionService {
     public List<Question> findAll() {
         return questionRepository.findAll();
     }
+
+    public List<Question> findAllByLocaleCode(String localeCode) {
+        return questionRepository.findAllByLocaleCode(localeCode);
+    }
 }

@@ -6,6 +6,8 @@ public class Question {
 
     private String questionText;
 
+    private String localeCode;
+
     private List<String> answers;
 
     private int rightAnswerInd;
@@ -43,4 +45,8 @@ public class Question {
     public void setRightAnswerInd(int rightAnswerInd) {
         this.rightAnswerInd = rightAnswerInd;
     }
+
+    public String getLocaleCode() { return localeCode; }
+
+    public void setLocaleCode(String localeCode) { this.localeCode = localeCode; }
 }

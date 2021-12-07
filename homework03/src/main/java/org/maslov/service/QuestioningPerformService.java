@@ -7,21 +7,25 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Scanner;
 
+import static org.maslov.util.QuestioningResultRepresentation.printToSystemOut;
+
 @Service
 public class QuestioningPerformService {
 
     private final QuestionService questionService;
+    private final MessageSourceService messageSourceService;
 
 
-    public QuestioningPerformService(QuestionService questionService) {
+    public QuestioningPerformService(MessageSourceService messageSourceService, QuestionService questionService) {
+        this.messageSourceService = messageSourceService;
         this.questionService = questionService;
     }
 
 
-    public QuestioningResult performQuestioning() {
-        List<Question> questions = questionService.findAll();
+    private QuestioningResult performQuestioningImpl() {
+        List<Question> questions = questionService.findAllByLocaleCode(messageSourceService.getCodeCurrenLocale());
         QuestioningResult result = new QuestioningResult(questions.size());
-        System.out.println("Please answer the questions\n");
+        System.out.println(messageSourceService.getMessage("greeting"));
         Scanner sc = new Scanner(System.in);
         for(Question q: questions) {
             System.out.println(q.getQuestionText() + "\n");
@@ -36,6 +40,15 @@ public class QuestioningPerformService {
         }
 
         return result;
+    }
+
+    public void performQuestioning() {
+        QuestioningResult questioningResult = performQuestioningImpl();
+        System.out.println(messageSourceService.getMessage("result",
+                new Object[]{questioningResult.getRightAnswersNumber(),
+                        questioningResult.getQuestionNumber()}));
+        printToSystemOut(questioningResult);
+
     }
 
 }

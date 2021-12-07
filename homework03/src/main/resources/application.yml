@@ -1,4 +1,5 @@
 application:
   question:
-    startLocaleCode: en
+    startLocaleCode: ru
     source: questions.csv
+    bundle-path: classpath:locale

@@ -14,8 +14,8 @@ public class App {
     public static void main(String[] args) {
         ApplicationContext context =SpringApplication.run(App.class, args);
         QuestioningPerformService service = context.getBean(QuestioningPerformService.class);
-        QuestioningResult rv = service.performQuestioning();
-        QuestioningResultRepresentation.printToSystemOut(rv);
+        service.performQuestioning();
+
 
     }
 }

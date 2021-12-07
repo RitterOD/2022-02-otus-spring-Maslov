@@ -19,8 +19,10 @@ public class QuestionRepositoryImpl implements QuestionRepository{
         return loader.findAll();
     }
 
-
-
+    @Override
+    public List<Question> findAllByLocaleCode(String localeCode) {
+        return loader.findAllByLocaleCode(localeCode);
+    }
 
 
 }

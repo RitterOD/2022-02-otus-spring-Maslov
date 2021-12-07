@@ -9,8 +9,15 @@ import org.springframework.stereotype.Component;
 public class AppProperties {
     private String startLocaleCode;
     private String source;
+    private String bundlePath;
 
+    public String getBundlePath() {
+        return bundlePath;
+    }
 
+    public void setBundlePath(String bundlePath) {
+        this.bundlePath = bundlePath;
+    }
 
     public String getStartLocaleCode() {
         return startLocaleCode;
