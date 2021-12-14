@@ -4,12 +4,20 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @ConfigurationProperties(prefix = "application.question")
 @Component
 public class AppProperties {
-    private String startLocaleCode;
+
+
+    private String startLocaleTag;
     private String source;
     private String bundlePath;
+
+
+
+    private List<String> supportedLocaleTags;
 
     public String getBundlePath() {
         return bundlePath;
@@ -19,19 +27,27 @@ public class AppProperties {
         this.bundlePath = bundlePath;
     }
 
-    public String getStartLocaleCode() {
-        return startLocaleCode;
-    }
-
-    public void setStartLocaleCode(String startLocaleCode) {
-        this.startLocaleCode = startLocaleCode;
-    }
-
     public String getSource() {
         return source;
     }
 
     public void setSource(String source) {
         this.source = source;
+    }
+
+    public String getStartLocaleTag() {
+        return startLocaleTag;
+    }
+
+    public void setStartLocaleTag(String startLocaleTag) {
+        this.startLocaleTag = startLocaleTag;
+    }
+
+    public List<String> getSupportedLocaleTags() {
+        return supportedLocaleTags;
+    }
+
+    public void setSupportedLocaleTags(List<String> supportedLocaleTags) {
+        this.supportedLocaleTags = supportedLocaleTags;
     }
 }

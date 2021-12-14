@@ -1,7 +1,9 @@
 package org.maslov.service;
 
 import org.maslov.model.Question;
+import org.maslov.repository.QuestionRepository;
 import org.maslov.repository.QuestionRepositoryImpl;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,9 +11,9 @@ import java.util.List;
 @Service
 public class QuestionService {
 
-    private QuestionRepositoryImpl questionRepository;
+    private QuestionRepository questionRepository;
 
-    public QuestionService(QuestionRepositoryImpl questionRepository) {
+    public QuestionService( @Qualifier("questionRepositoryImpl") QuestionRepositoryImpl questionRepository) {
         this.questionRepository = questionRepository;
     }
 

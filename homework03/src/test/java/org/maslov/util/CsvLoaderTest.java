@@ -36,13 +36,13 @@ class CsvLoaderTest {
 
     @Test
     public void checkLoadRu() {
-        List<Question> lst = loader.findAllByLocaleCode(AppConstants.CODE_LOCALE_RU);
+        List<Question> lst = loader.findAllByLocaleCode("ru-RU");
         Assert.assertEquals(lst.size(), 5);
     }
 
     @Test
     public void checkLoadEn() {
-        List<Question> lst = loader.findAllByLocaleCode(AppConstants.CODE_LOCALE_EN);
+        List<Question> lst = loader.findAllByLocaleCode("en");
         Assert.assertEquals(lst.size(), 5);
     }
 

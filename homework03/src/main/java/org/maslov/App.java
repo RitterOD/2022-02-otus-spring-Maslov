@@ -2,7 +2,6 @@ package org.maslov;
 
 import org.maslov.model.QuestioningResult;
 import org.maslov.service.QuestioningPerformService;
-import org.maslov.util.QuestioningResultRepresentation;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;

@@ -28,21 +28,15 @@ public class CsvLoader implements QuestionRepository {
     }
 
     private List<String[]> readAll() throws IOException {
-
-
         InputStream resource = new ClassPathResource(classPathResource).getInputStream();
-            try (BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(resource))) {
-                CSVReader csvReader = new CSVReader(reader);
-                List<String[]> list;
-                list = csvReader.readAll();
-                reader.close();
-                csvReader.close();
-                return list;
-            } catch (IOException e) {
-                throw e;
-            }
-
+        BufferedReader reader = new BufferedReader(
+                new InputStreamReader(resource));
+        CSVReader csvReader = new CSVReader(reader);
+        List<String[]> list;
+        list = csvReader.readAll();
+        reader.close();
+        csvReader.close();
+        return list;
     }
 
     public static Question mapCsvRepresentationToQuestion(String[] csvRep) throws IOException {
@@ -80,7 +74,7 @@ public class CsvLoader implements QuestionRepository {
             }
             return rv;
         } catch (IOException e) {
-            return rv;
+            throw new IllegalStateException("Can't load List<Question> from csv file", e);
         }
 
 
