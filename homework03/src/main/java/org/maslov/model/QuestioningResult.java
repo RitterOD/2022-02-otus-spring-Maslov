@@ -1,11 +1,12 @@
 package org.maslov.model;
 
 public class QuestioningResult {
-    private int questionNumber;
-    private int rightAnswersNumber;
+    private Integer questionNumber;
+    private Integer rightAnswersNumber;
 
     public QuestioningResult(int questionNumber) {
         this.questionNumber = questionNumber;
+        this.rightAnswersNumber = 0;
     }
 
     public int getQuestionNumber() {

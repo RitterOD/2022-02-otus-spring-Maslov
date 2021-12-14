@@ -1,16 +1,12 @@
 package org.maslov.repository;
 
-import com.opencsv.CSVReader;
 import org.maslov.model.Question;
 import org.maslov.util.CsvLoader;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
-import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
 
-
+@Service
 public class QuestionRepositoryImpl implements QuestionRepository{
 
     private final CsvLoader loader;
@@ -23,8 +19,10 @@ public class QuestionRepositoryImpl implements QuestionRepository{
         return loader.findAll();
     }
 
-
-
+    @Override
+    public List<Question> findAllByLocaleCode(String localeCode) {
+        return loader.findAllByLocaleCode(localeCode);
+    }
 
 
 }

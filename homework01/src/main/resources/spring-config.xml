@@ -2,9 +2,20 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="csvLoader" class="org.maslov.util.CsvLoader" >
+        <constructor-arg name="classPathResource" value="questions.csv" />
+    </bean>
+
+    <bean id="questionRepository" class="org.maslov.repository.QuestionRepositoryImpl" >
+        <constructor-arg name="loader" ref="csvLoader" />
+    </bean>
+
     <bean id="questionService" class="org.maslov.service.QuestionService">
         <constructor-arg name="questionRepository" ref="questionRepository" />
     </bean>
 
-    <bean id="questionRepository" class="org.maslov.repository.QuestionRepositoryImpl" />
+    <bean id="questioningPerformService" class="org.maslov.service.QuestioningPerformService">
+        <constructor-arg name="questionService" ref="questionService" />
+    </bean>
+
 </beans>

@@ -1,0 +1,12 @@
+application:
+  question:
+    startLocaleTag: en
+    source: questions.csv
+    bundle-path: classpath:messages
+    supportedLocaleTags:
+      - ru-RU
+      - en-US
+      - en
+spring:
+  messages:
+    basename: messages/messages
