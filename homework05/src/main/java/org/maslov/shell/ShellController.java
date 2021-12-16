@@ -1,9 +1,9 @@
 package org.maslov.shell;
 
 
-import org.springframework.shell.standard.ShellComponent;
+//import org.springframework.shell.standard.ShellComponent;
 
-@ShellComponent
+//@ShellComponent
 public class ShellController {
 
 
