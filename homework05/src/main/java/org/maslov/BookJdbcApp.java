@@ -19,5 +19,16 @@ public class BookJdbcApp {
         for (Book b : rv) {
             System.out.println(b.getName());
         }
+        Book b = Book.builder()
+                .name("TDD")
+                .author(null)
+                .genre(null)
+                .build();
+        br.insert(b);
+        System.out.println("After\n");
+        rv = br.findAll();
+        for (Book e : rv) {
+            System.out.println(e.getName());
+        }
     }
 }
