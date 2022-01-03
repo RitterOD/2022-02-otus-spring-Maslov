@@ -1,0 +1,15 @@
+insert into authors(`first_name`, `last_name`) values('Leo', 'Tolstoy');
+insert into authors(`first_name`, `last_name`) values('Fedor', 'Dostoevskiy');
+insert into authors(`first_name`, `last_name`) values('Slava', 'KPSS');
+insert into authors(`first_name`, `last_name`) values('Daria', 'Kozmina');
+insert into authors(`first_name`, `last_name`) values('Denis', 'Ritchi');
+insert into genres(`name`) values ('drama');
+insert into genres(`name`) values ('detective');
+insert into genres(`name`) values ('essay');
+insert into genres(`name`) values ('epic novel');
+insert into genres(`name`) values ('technical');
+insert into books (`name`, `AUTHOR_ID`, `GENRE_ID`) values ('War and Peace', 1, 4);
+insert into books (`name`, `AUTHOR_ID`, `GENRE_ID`) values ('Crime and Punishment', 2, 2);
+insert into books (`name`, `AUTHOR_ID`, `GENRE_ID`) values ('Logic of antihype', 3, 3);
+insert into books (`name`, `AUTHOR_ID`, `GENRE_ID`) values ('Spring security in action', 4, 5);
+insert into books (`name`, `AUTHOR_ID`, `GENRE_ID`) values ('C Programming language', 5, 4);

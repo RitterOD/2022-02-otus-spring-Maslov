@@ -1,12 +1,12 @@
 package org.maslov.repository;
 
+import org.maslov.model.Author;
 import org.maslov.model.Book;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
@@ -18,16 +18,32 @@ import java.util.Map;
 @Repository
 public class BookRepositoryImpl implements BookRepository{
     private final NamedParameterJdbcOperations jdbcOperations;
+    private final AuthorRepository authorRepository;
+    private final GenreRepository genreRepository;
 
-    public BookRepositoryImpl(NamedParameterJdbcOperations jdbcOperations) {
+    public BookRepositoryImpl(NamedParameterJdbcOperations jdbcOperations, AuthorRepository authorRepository, GenreRepository genreRepository) {
         this.jdbcOperations = jdbcOperations;
+        this.authorRepository = authorRepository;
+        this.genreRepository = genreRepository;
     }
 
+    @Override
     public List<Book> findAll(){
         List<Book> rv = jdbcOperations.query("SELECT * FROM books",  new BookRawMapper());
         return rv;
     }
 
+    @Override
+    public List<Book> findById(Long id) {
+        Map<String, Object> map = Map.of(
+                "id", id);
+        List<Book> rv = jdbcOperations.query("SELECT * FROM books where id = :id",
+                new MapSqlParameterSource(map),
+                new BookRawMapper());
+        return rv;
+    }
+
+    @Override
     public Book insert(Book b) {
         try {
             Map<String, Object> map = new HashMap<>();
