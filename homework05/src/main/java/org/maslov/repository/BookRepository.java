@@ -10,4 +10,6 @@ public interface BookRepository {
     List<Book> findById(Long id);
 
     Book insert(Book b);
+
+    int deleteById(Long id);
 }

@@ -50,4 +50,12 @@ class BookRepositoryImplTest {
             System.out.println(e.toString());
         }
     }
+
+    @Test
+    void findById() {
+        List<Book> lstBook = bookRepository.findById(1L);
+        for(Book e: lstBook) {
+            System.out.println(e.toString());
+        }
+    }
 }

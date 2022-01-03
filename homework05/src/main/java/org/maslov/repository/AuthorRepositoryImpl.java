@@ -86,7 +86,7 @@ public class AuthorRepositoryImpl implements AuthorRepository{
             Author rv = Author.builder()
                     .id(rs.getLong("id"))
                     .firstName(rs.getString("first_name"))
-                    .LastName(rs.getString("last_name"))
+                    .lastName(rs.getString("last_name"))
                     .build();
             return rv;
         }

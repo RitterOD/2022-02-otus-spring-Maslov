@@ -13,6 +13,6 @@ import java.util.List;
 public class Author {
     private Long id;
     private String firstName;
-    private String LastName;
+    private String lastName;
     private List<Book> bookList;
 }
