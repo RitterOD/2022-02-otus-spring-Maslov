@@ -7,9 +7,11 @@ import java.util.List;
 public interface BookRepository {
     List<Book> findAll();
 
-    List<Book> findById(Long id);
+    Book findById(Long id);
 
-    Book insert(Book b);
+    Book create(Book b);
 
     int deleteById(Long id);
+
+    int update(Book b);
 }

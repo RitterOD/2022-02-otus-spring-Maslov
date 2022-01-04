@@ -24,7 +24,7 @@ public class BookJdbcApp {
                 .author(null)
                 .genre(null)
                 .build();
-        br.insert(b);
+        br.create(b);
         System.out.println("After\n");
         rv = br.findAll();
         for (Book e : rv) {

@@ -3,7 +3,7 @@ package org.maslov.repository;
 import org.maslov.model.Author;
 import org.maslov.model.Book;
 import org.maslov.model.Genre;
-import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
@@ -30,51 +30,68 @@ public class BookRepositoryImpl implements BookRepository{
 
     @Override
     public List<Book> findAll(){
-        List<Book> rv = jdbcOperations.query("SELECT * FROM books",  new BookRawMapper());
+        List<Book> rv = jdbcOperations.query("SELECT * FROM books LEFT JOIN authors ON books.author_id = authors.id" +
+                " JOIN" +
+                " genres ON books.genre_id = genres.id ",  new BookRawMapper());
         return rv;
     }
 
     @Override
-    public List<Book> findById(Long id) {
+    public Book findById(Long id) {
         Map<String, Object> map = Map.of(
                 "id", id);
-        List<Book> rv = jdbcOperations.query("SELECT * FROM books JOIN authors on books.author_id = authors.id JOIN " +
-                        "genres ON books.genre_id = genres.id where books.id = :id",
+        Book rv = jdbcOperations.queryForObject("SELECT * FROM books LEFT JOIN authors ON books.author_id = authors.id  LEFT JOIN " +
+                        "genres ON books.genre_id = genres.id WHERE books.id = :id",
                 new MapSqlParameterSource(map),
                 new BookRawMapper());
         return rv;
     }
 
     @Override
-    public Book insert(Book b) {
-        try {
+    public Book create(Book b) {
             Map<String, Object> map = new HashMap<>();
-            map.put("name", (Object) b.getName());
-            map.put("author_id", null);
-            map.put("genre_id", null);
+            map.put("name", b.getName());
+            if (b.getAuthor() != null) {
+                map.put("author_id", b.getAuthor().getId());
+            } else {
+                map.put("author_id", null);
+            }
+            if (b.getGenre() != null) {
+                map.put("genre_id", b.getGenre().getId());
+            } else {
+                map.put("genre_id", null);
+            }
             GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-            jdbcOperations.update("insert into books (`name`, `author_id`, `genre_id`) values (:name, :author_id, :genre_id)",
+            int rv = jdbcOperations.update("insert into books (`name`, `author_id`, `genre_id`) values (:name, :author_id, :genre_id)",
                     new MapSqlParameterSource(map), keyHolder);
-            return null;
-        } catch (DataAccessException e) {
-            System.out.println("Message" + e.getMessage());
-            return null;
-        }
+            if (rv == 0) {
+                throw new DataAccessResourceFailureException("Can't insert" + b.toString());
+            } else {
+                b.setId(keyHolder.getKey().longValue());
+            }
+            return b;
+
     }
 
     @Override
     public int deleteById(Long id) {
-        try {
-            Map<String, Object> map = Map.of(
-                    "id", id);
-            GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
-            return jdbcOperations.update("delete from books where id = :id",
-                    new MapSqlParameterSource(map), keyHolder);
+        Map<String, Object> map = Map.of(
+                "id", id);
+        GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
+        return jdbcOperations.update("delete from books where id = :id",
+                new MapSqlParameterSource(map), keyHolder);
+    }
 
-        } catch (DataAccessException e) {
-            System.out.println("Message" + e.getMessage());
-            return 0;
-        }
+    @Override
+    public int update(Book b) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("name", b.getName());
+        map.put("author_id", b.getAuthor().getId());
+        map.put("genre_id", b.getGenre().getId());
+        GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
+        return jdbcOperations.update("update books set name = :name, author_id = :author_id, genre_id = :genre_id" +
+                "where id = :id",
+                new MapSqlParameterSource(map), keyHolder);
     }
 
     private static class BookRawMapper implements RowMapper<Book> {

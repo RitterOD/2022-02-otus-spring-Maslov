@@ -27,35 +27,36 @@ class BookRepositoryImplTest {
 
     public static int INITIAL_NUMBER_OF_BOOKS = 5;
 
+    public static String FIRST_BOOK_NAME = "War and Peace";
+    public static String FIRST_BOOK_AUTHOR_FIRST_NAME = "Leo";
+    public static String FIRST_BOOK_AUTHOR_LAST_NAME = "Tolstoy";
+    public static String FIRST_BOOK_GENRE = "epic novel";
+
     @Test
     public void findAll() {
-        List<Book> books = bookRepository.findAll();
-        for(Book b: books) {
-            System.out.println(b.toString());
-        }
-        assertEquals(INITIAL_NUMBER_OF_BOOKS, books.size());
+        assertDoesNotThrow( () -> {
+            List<Book> books = bookRepository.findAll();
+            for (Book b : books) {
+                System.out.println(b.toString());
+            }
+            assertEquals(INITIAL_NUMBER_OF_BOOKS, books.size());
+        });
     }
 
     @Test
-    public void insert() {
-        List<Book> books = bookRepository.findAll();
-        for(Book b: books) {
-            System.out.println(b.toString());
-        }
-        assertEquals(INITIAL_NUMBER_OF_BOOKS, books.size());
+    public void create() {
         Book b = Book.builder().name("TDD2").build();
-        bookRepository.insert(b);
-        books = bookRepository.findAll();
-        for(Book e: books) {
-            System.out.println(e.toString());
-        }
+        Long id = bookRepository.create(b).getId();
+        Book tmp = bookRepository.findById(id);
+        assertEquals(b.getName(), tmp.getName());
     }
 
     @Test
     void findById() {
-        List<Book> lstBook = bookRepository.findById(1L);
-        for(Book e: lstBook) {
-            System.out.println(e.toString());
-        }
+        Book b = bookRepository.findById(1L);
+        assertEquals(b.getName(), FIRST_BOOK_NAME);
+        assertEquals(b.getAuthor().getFirstName(), FIRST_BOOK_AUTHOR_FIRST_NAME);
+        assertEquals(b.getAuthor().getLastName(), FIRST_BOOK_AUTHOR_LAST_NAME);
+        assertEquals(b.getGenre().getName(), FIRST_BOOK_GENRE);
     }
 }
