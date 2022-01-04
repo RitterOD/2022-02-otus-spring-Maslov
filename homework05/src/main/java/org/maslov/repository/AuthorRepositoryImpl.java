@@ -136,6 +136,7 @@ public class AuthorRepositoryImpl implements AuthorRepository{
                 while(rs.next()) {
                     lstBook.add(getBook(rs));
                 }
+                rv.bookList(lstBook);
                 return List.of(rv.build());
             }
         }

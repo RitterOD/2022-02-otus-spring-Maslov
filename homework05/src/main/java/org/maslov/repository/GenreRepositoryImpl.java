@@ -131,6 +131,7 @@ public class GenreRepositoryImpl implements GenreRepository{
                 while(rs.next()) {
                     lstBook.add(getBook(rs));
                 }
+                rv.bookList(lstBook);
                 return List.of(rv.build());
             }
         }

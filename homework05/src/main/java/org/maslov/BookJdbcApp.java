@@ -14,21 +14,5 @@ import java.util.List;
 public class BookJdbcApp {
     public static void main(String[] args) {
         ApplicationContext context =SpringApplication.run(BookJdbcApp.class, args);
-        BookRepositoryImpl br = context.getBean(BookRepositoryImpl.class);
-        List<Book> rv = br.findAll();
-        for (Book b : rv) {
-            System.out.println(b.getName());
-        }
-        Book b = Book.builder()
-                .name("TDD")
-                .author(null)
-                .genre(null)
-                .build();
-        br.create(b);
-        System.out.println("After\n");
-        rv = br.findAll();
-        for (Book e : rv) {
-            System.out.println(e.getName());
-        }
     }
 }

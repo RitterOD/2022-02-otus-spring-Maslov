@@ -31,7 +31,7 @@ public class BookRepositoryImpl implements BookRepository{
     @Override
     public List<Book> findAll(){
         List<Book> rv = jdbcOperations.query("SELECT * FROM books LEFT JOIN authors ON books.author_id = authors.id" +
-                " JOIN" +
+                " LEFT JOIN" +
                 " genres ON books.genre_id = genres.id ",  new BookRawMapper());
         return rv;
     }
