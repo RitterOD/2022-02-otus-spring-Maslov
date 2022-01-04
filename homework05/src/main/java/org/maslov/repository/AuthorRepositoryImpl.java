@@ -3,6 +3,8 @@ package org.maslov.repository;
 import org.maslov.model.Author;
 import org.maslov.model.Book;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -13,9 +15,9 @@ import org.springframework.stereotype.Repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Repository
 public class AuthorRepositoryImpl implements AuthorRepository{
@@ -56,13 +58,20 @@ public class AuthorRepositoryImpl implements AuthorRepository{
 
 
     @Override
-    public List<Author> findById(Long id) {
+    public Author findById(Long id) {
         Map<String, Object> map = Map.of(
                 "id", id);
-        List<Author> rv = jdbcOperations.query("SELECT * FROM authors JOIN books ON authors.id = books.authors_id where authors.id = :id",
+        List<Author> rv = jdbcOperations.query("SELECT * FROM authors LEFT JOIN books ON authors.id = books.author_id where authors.id = :id",
                 new MapSqlParameterSource(map),
                 new AuthorResultSetExtractor());
-        return rv;
+        if (rv.isEmpty()) {
+            throw new EmptyResultDataAccessException("Can't find Author with id = " + id, 1);
+        } else if (rv.size() != 1){
+            throw new IncorrectResultSizeDataAccessException("Programming error. Find several author with 1 id", 1,
+                    rv.size());
+        } else {
+            return rv.get(0);
+        }
     }
 
     @Override
@@ -75,15 +84,24 @@ public class AuthorRepositoryImpl implements AuthorRepository{
     }
 
     @Override
-    public List<Author> findByFirstNameAndLastName(String firstName, String lastName) {
-        Map<String, Object> map = Map.of(
-                "first_name", firstName,
-                "last_name", lastName);
-        List<Author> rv = jdbcOperations.query("SELECT * FROM authors where first_name = :first_name and" +
+    public Author findByFirstNameAndLastName(String firstName, String lastName) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("first_name", firstName);
+        map.put("last_name", lastName);
+        List<Author> rv = jdbcOperations.query("SELECT * FROM authors where first_name = :first_name AND " +
                 "last_name = :last_name",
                 new MapSqlParameterSource(map),
                 new AuthorRawMapper());
-        return rv;
+        if (rv.isEmpty()) {
+            throw new EmptyResultDataAccessException("Can't find Author with firstName = " + firstName
+                    + " and lastName = " + lastName
+                    , 1);
+        } else if (rv.size() != 1){
+            throw new IncorrectResultSizeDataAccessException("Programming error. Find several author with 1 id", 1,
+                    rv.size());
+        } else {
+            return rv.get(0);
+        }
     }
 
 

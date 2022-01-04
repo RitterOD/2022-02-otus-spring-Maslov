@@ -86,11 +86,20 @@ public class BookRepositoryImpl implements BookRepository{
     public int update(Book b) {
         Map<String, Object> map = new HashMap<>();
         map.put("name", b.getName());
-        map.put("author_id", b.getAuthor().getId());
-        map.put("genre_id", b.getGenre().getId());
+        if (b.getAuthor() != null) {
+            map.put("author_id", b.getAuthor().getId());
+        } else {
+            map.put("author_id", null);
+        }
+        if (b.getGenre() != null) {
+            map.put("genre_id", b.getGenre().getId());
+        } else {
+            map.put("genre_id", null);
+        }
+        map.put("id", b.getId());
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         return jdbcOperations.update("update books set name = :name, author_id = :author_id, genre_id = :genre_id" +
-                "where id = :id",
+                " where id = :id",
                 new MapSqlParameterSource(map), keyHolder);
     }
 

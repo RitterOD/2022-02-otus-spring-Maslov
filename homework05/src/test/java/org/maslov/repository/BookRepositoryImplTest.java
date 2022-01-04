@@ -5,6 +5,7 @@ import org.maslov.model.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.jdbc.Sql;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,10 +28,11 @@ class BookRepositoryImplTest {
 
     public static int INITIAL_NUMBER_OF_BOOKS = 5;
 
-    public static String FIRST_BOOK_NAME = "War and Peace";
-    public static String FIRST_BOOK_AUTHOR_FIRST_NAME = "Leo";
-    public static String FIRST_BOOK_AUTHOR_LAST_NAME = "Tolstoy";
-    public static String FIRST_BOOK_GENRE = "epic novel";
+    public static final String FIRST_BOOK_NAME = "War and Peace";
+    public static final String FIRST_BOOK_AUTHOR_FIRST_NAME = "Leo";
+    public static final String FIRST_BOOK_AUTHOR_LAST_NAME = "Tolstoy";
+    public static final String FIRST_BOOK_GENRE = "epic novel";
+    public static final String FIRST_BOOK_NEW_NAME = "Anna Karenina";
 
     @Test
     public void findAll() {
@@ -54,9 +56,35 @@ class BookRepositoryImplTest {
     @Test
     void findById() {
         Book b = bookRepository.findById(1L);
-        assertEquals(b.getName(), FIRST_BOOK_NAME);
-        assertEquals(b.getAuthor().getFirstName(), FIRST_BOOK_AUTHOR_FIRST_NAME);
-        assertEquals(b.getAuthor().getLastName(), FIRST_BOOK_AUTHOR_LAST_NAME);
-        assertEquals(b.getGenre().getName(), FIRST_BOOK_GENRE);
+        assertEquals(FIRST_BOOK_NAME, b.getName());
+        assertEquals(FIRST_BOOK_AUTHOR_FIRST_NAME, b.getAuthor().getFirstName());
+        assertEquals(FIRST_BOOK_AUTHOR_LAST_NAME, b.getAuthor().getLastName());
+        assertEquals(FIRST_BOOK_GENRE, b.getGenre().getName());
+    }
+
+    @Test
+    void findByIdNotFound() {
+        assertThrows(EmptyResultDataAccessException.class, () -> {
+            Book b = bookRepository.findById(1000L);
+        });
+    }
+
+    @Test
+    public void update() {
+        Book b = bookRepository.findById(1L);
+        b.setName(FIRST_BOOK_NEW_NAME);
+        bookRepository.update(b);
+        Book tmp = bookRepository.findById(1L);
+        assertEquals(FIRST_BOOK_NEW_NAME, tmp.getName());
+    }
+
+
+    @Test
+    public void delete() {
+        int rv = bookRepository.deleteById(1L);
+        assertEquals(1, rv);
+        assertThrows(EmptyResultDataAccessException.class, () -> {
+            Book b = bookRepository.findById(1L);
+        });
     }
 }
