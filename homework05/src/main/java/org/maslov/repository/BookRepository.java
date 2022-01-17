@@ -7,6 +7,10 @@ import java.util.List;
 public interface BookRepository {
     List<Book> findAll();
 
+    List<Book> findAllByGenreId(Long id);
+
+    List<Book> findAllByAuthorId(Long id);
+
     Book findById(Long id);
 
     Book create(Book b);

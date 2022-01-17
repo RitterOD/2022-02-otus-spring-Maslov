@@ -49,9 +49,8 @@ public class GenreRepositoryImpl implements GenreRepository{
     public int update(Genre genre) {
         Map<String, Object> map = Map.of( "id", genre.getId(),
                 "name", genre.getName());
-        GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         return jdbcOperations.update("update genres set name = :name where id = :id",
-                new MapSqlParameterSource(map), keyHolder);
+                new MapSqlParameterSource(map));
     }
 
 
@@ -60,19 +59,17 @@ public class GenreRepositoryImpl implements GenreRepository{
     public int deleteById(Long id) {
             Map<String, Object> map = Map.of(
                     "id", id);
-            GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
             return jdbcOperations.update("delete from genres where id = :id",
-                    new MapSqlParameterSource(map), keyHolder);
+                    new MapSqlParameterSource(map));
     }
 
     @Override
     public Genre findById(Long id) {
         Map<String, Object> map = Map.of(
                 "id", id);
-        List<Genre> rv = jdbcOperations.query("SELECT * FROM genres LEFT JOIN books ON books.genre_id = genres.id " +
-                        "where genres.id = :id",
+        List<Genre> rv = jdbcOperations.query("SELECT * FROM genres where genres.id = :id",
                 new MapSqlParameterSource(map),
-                new GenreResultSetExtractor());
+                new GenreRawMapper());
         if (rv.isEmpty()) {
             throw new EmptyResultDataAccessException("Can't find genre with id = " + id, 1);
         } else if (rv.size() != 1){
@@ -106,44 +103,9 @@ public class GenreRepositoryImpl implements GenreRepository{
 
         @Override
         public Genre mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Genre rv = Genre.builder()
-                    .id(rs.getLong("id"))
-                    .name(rs.getString("name"))
-                    .build();
+            Genre rv = new Genre(rs.getLong("id"), rs.getString("name"));
             return rv;
         }
     }
-
-
-    private static class GenreResultSetExtractor implements ResultSetExtractor<List<Genre>> {
-
-        @Override
-        public List<Genre> extractData(ResultSet rs) throws SQLException, DataAccessException {
-            if (!rs.isBeforeFirst()) {
-                return List.of();
-            } else {
-                Genre.GenreBuilder rv = Genre.builder();
-                List<Book> lstBook = new ArrayList<>();
-                rs.next();
-                rv.name(rs.getString("genres.name"));
-                rv.id(rs.getLong("genres.id"));
-                lstBook.add(getBook(rs));
-                while(rs.next()) {
-                    lstBook.add(getBook(rs));
-                }
-                rv.bookList(lstBook);
-                return List.of(rv.build());
-            }
-        }
-
-        private Book getBook(ResultSet rs) throws SQLException {
-            Book rv = Book.builder()
-                    .id(rs.getLong("books.id"))
-                    .name(rs.getString("books.name"))
-                    .build();
-            return rv;
-        }
-    }
-
 
 }

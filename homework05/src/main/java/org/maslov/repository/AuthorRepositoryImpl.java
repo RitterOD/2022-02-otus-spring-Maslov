@@ -29,7 +29,7 @@ public class AuthorRepositoryImpl implements AuthorRepository{
 
     @Override
     public List<Author> findAll(){
-        List<Author> rv = jdbcOperations.query("SELECT * FROM authors",  new AuthorRawMapper());
+        List<Author> rv = jdbcOperations.query("SELECT id, first_name, last_name FROM authors",  new AuthorRawMapper());
         return rv;
     }
 
@@ -50,9 +50,8 @@ public class AuthorRepositoryImpl implements AuthorRepository{
         Map<String, Object> map = Map.of("id", author.getId(),
                 "first_name", author.getFirstName(),
                 "last_name", author.getLastName());
-        GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         return jdbcOperations.update("update authors set first_name = :first_name, last_name = :last_name where id = :id",
-                new MapSqlParameterSource(map), keyHolder);
+                new MapSqlParameterSource(map));
     }
 
 
@@ -61,9 +60,8 @@ public class AuthorRepositoryImpl implements AuthorRepository{
     public Author findById(Long id) {
         Map<String, Object> map = Map.of(
                 "id", id);
-        List<Author> rv = jdbcOperations.query("SELECT * FROM authors LEFT JOIN books ON authors.id = books.author_id where authors.id = :id",
-                new MapSqlParameterSource(map),
-                new AuthorResultSetExtractor());
+        List<Author> rv = jdbcOperations.query("SELECT id, first_name, last_name FROM authors where id = :id", new MapSqlParameterSource(map),
+                new AuthorRawMapper());
         if (rv.isEmpty()) {
             throw new EmptyResultDataAccessException("Can't find Author with id = " + id, 1);
         } else if (rv.size() != 1){
@@ -78,9 +76,8 @@ public class AuthorRepositoryImpl implements AuthorRepository{
     public int deleteById(Long id) {
         Map<String, Object> map = Map.of(
                 "id", id);
-        GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         return jdbcOperations.update("delete from authors where id = :id",
-                new MapSqlParameterSource(map), keyHolder);
+                new MapSqlParameterSource(map));
     }
 
     @Override
@@ -88,7 +85,7 @@ public class AuthorRepositoryImpl implements AuthorRepository{
         Map<String, Object> map = new HashMap<>();
         map.put("first_name", firstName);
         map.put("last_name", lastName);
-        List<Author> rv = jdbcOperations.query("SELECT * FROM authors where first_name = :first_name AND " +
+        List<Author> rv = jdbcOperations.query("SELECT id, first_name, last_name FROM authors where first_name = :first_name AND " +
                 "last_name = :last_name",
                 new MapSqlParameterSource(map),
                 new AuthorRawMapper());
@@ -117,40 +114,4 @@ public class AuthorRepositoryImpl implements AuthorRepository{
             return rv;
         }
     }
-
-
-    private static class AuthorResultSetExtractor implements ResultSetExtractor<List<Author>> {
-
-        @Override
-        public List<Author> extractData(ResultSet rs) throws SQLException, DataAccessException {
-            if (!rs.isBeforeFirst()) {
-                return List.of();
-            } else {
-                Author.AuthorBuilder rv = Author.builder();
-                List<Book> lstBook = new ArrayList<>();
-                rs.next();
-                rv.firstName(rs.getString("authors.first_name"));
-                rv.lastName(rs.getString("authors.last_name"));
-                rv.id(rs.getLong("authors.id"));
-                lstBook.add(getBook(rs));
-                while(rs.next()) {
-                    lstBook.add(getBook(rs));
-                }
-                rv.bookList(lstBook);
-                return List.of(rv.build());
-            }
-        }
-
-        private Book getBook(ResultSet rs) throws SQLException {
-            Book rv = Book.builder()
-                    .id(rs.getLong("books.id"))
-                    .name(rs.getString("books.name"))
-                    .build();
-
-            return rv;
-        }
-    }
-
-
-
 }

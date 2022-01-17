@@ -54,7 +54,8 @@ public class AppService {
     public String getGenreDetails(Long id) {
         try {
             Genre g = genreRepository.findById(id);
-            return "\n" + genreToStringMapper(g);
+            List<Book> books = bookRepository.findAllByGenreId(g.getId());
+            return "\n" + genreToStringMapper(g, books);
         } catch (DataAccessException e) {
             return "Book with id = " + id + " not found";
         }
@@ -63,7 +64,8 @@ public class AppService {
     public String getAuthorDetails(Long id) {
         try {
             Author author = authorRepository.findById(id);
-            return "\n" + authorToStringMapper(author);
+            List<Book> books = bookRepository.findAllByGenreId(author.getId());
+            return "\n" + authorToStringMapper(author, books);
         } catch (DataAccessException e) {
             return "Author with id = " + id + " not found";
         }
@@ -90,7 +92,8 @@ public class AppService {
         } else {
             StringBuilder sb = new StringBuilder();
             for (Genre g : genres) {
-                sb.append(genreToStringMapper(g));
+                List<Book> books = bookRepository.findAllByGenreId(g.getId());
+                sb.append(genreToStringMapper(g, books));
                 sb.append("\n");
             }
             return sb.toString();
@@ -104,7 +107,8 @@ public class AppService {
         } else {
             StringBuilder sb = new StringBuilder();
             for (Author g : authors) {
-                sb.append(authorToStringMapper(g));
+                List<Book> books = bookRepository.findAllByAuthorId(g.getId());
+                sb.append(authorToStringMapper(g, books));
                 sb.append("\n");
             }
             return sb.toString();
@@ -197,12 +201,12 @@ public class AppService {
         return sb.toString();
     }
 
-    private String genreToStringMapper(Genre g) {
+    private String genreToStringMapper(Genre g, List<Book> books) {
         StringBuilder sb = new StringBuilder(g.getId() + " ");
         sb.append(g.getName() + " ");
-        if (g.getBookList() != null && !g.getBookList().isEmpty()) {
+        if (books != null && !books.isEmpty()) {
             sb.append("\nBook of this genre:\n");
-            for(Book b : g.getBookList()) {
+            for(Book b : books) {
                 sb.append(bookToStringMapper(b, true, false));
                 sb.append("\n");
             }
@@ -211,13 +215,13 @@ public class AppService {
         return sb.toString();
     }
 
-    private String authorToStringMapper(Author a) {
+    private String authorToStringMapper(Author a, List<Book> books) {
         StringBuilder sb = new StringBuilder(a.getId() + " ");
         sb.append(a.getFirstName() + " ");
         sb.append(a.getLastName());
-        if (a.getBookList() != null && !a.getBookList().isEmpty()) {
+        if (books != null && !books.isEmpty()) {
             sb.append("\nBook of this author:\n");
-            for(Book b : a.getBookList()) {
+            for(Book b : books) {
                 sb.append(bookToStringMapper(b, false, true));
                 sb.append("\n");
             }

@@ -8,9 +8,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder(toBuilder = true)
 public class Genre {
     private Long id;
     private String name;
-    private List<Book> bookList;
 }

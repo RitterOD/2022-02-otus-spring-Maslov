@@ -16,12 +16,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @JdbcTest
 @Import(GenreRepositoryImpl.class)
-@Sql({"classpath:test-schema.sql", "classpath:test-data.sql"})
+//@Sql({"classpath:test-schema.sql", "classpath:test-data.sql"})
 class GenreRepositoryImplTest {
 
 
     @Autowired
-    GenreRepository genreRepository;
+    private GenreRepository genreRepository;
 
     private final int GENRES_AMOUNT = 5;
     private final String NEW_GENRE_NAME = "Fantasy";
@@ -38,8 +38,7 @@ class GenreRepositoryImplTest {
 
     @Test
     void create() {
-        Genre genre = Genre.builder()
-                .name(NEW_GENRE_NAME).build();
+        Genre genre = new Genre(0L,NEW_GENRE_NAME);
         genre = genreRepository.create(genre);
         Genre tmp = genreRepository.findById(genre.getId());
         assertEquals(NEW_GENRE_NAME, tmp.getName());

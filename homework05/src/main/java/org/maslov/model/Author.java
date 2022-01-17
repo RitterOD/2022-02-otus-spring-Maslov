@@ -14,5 +14,4 @@ public class Author {
     private Long id;
     private String firstName;
     private String lastName;
-    private List<Book> bookList;
 }

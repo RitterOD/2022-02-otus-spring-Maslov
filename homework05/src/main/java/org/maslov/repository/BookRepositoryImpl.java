@@ -30,9 +30,37 @@ public class BookRepositoryImpl implements BookRepository{
 
     @Override
     public List<Book> findAll(){
-        List<Book> rv = jdbcOperations.query("SELECT * FROM books LEFT JOIN authors ON books.author_id = authors.id" +
+        List<Book> rv = jdbcOperations.query("SELECT books.id, books.name, books.author_id, books.genre_id, genres.name, " +
+                "authors.first_name, authors.last_name " +
+                " FROM books LEFT JOIN authors ON books.author_id = authors.id" +
                 " LEFT JOIN" +
-                " genres ON books.genre_id = genres.id ",  new BookRawMapper());
+                " genres ON books.genre_id = genres.id;",  new BookRawMapper());
+        return rv;
+    }
+
+    @Override
+    public List<Book> findAllByGenreId(Long id) {
+        Map<String, Object> map = Map.of(
+                "genre_id", id);
+        List<Book> rv = jdbcOperations.query("SELECT books.id, books.name, books.author_id, books.genre_id, genres.name, " +
+                        "authors.first_name, authors.last_name " +
+                        "FROM books LEFT JOIN authors ON books.author_id = authors.id  LEFT JOIN " +
+                        "genres ON books.genre_id = genres.id WHERE books.genre_id = :genre_id",
+                new MapSqlParameterSource(map),
+                new BookRawMapper());
+        return rv;
+    }
+
+    @Override
+    public List<Book> findAllByAuthorId(Long id) {
+        Map<String, Object> map = Map.of(
+                "author_id", id);
+        List<Book> rv = jdbcOperations.query("SELECT books.id, books.name, books.author_id, books.genre_id, genres.name, " +
+                        "authors.first_name, authors.last_name " +
+                        "FROM books LEFT JOIN authors ON books.author_id = authors.id  LEFT JOIN " +
+                        "genres ON books.genre_id = genres.id WHERE books.author_id = :author_id",
+                new MapSqlParameterSource(map),
+                new BookRawMapper());
         return rv;
     }
 
@@ -40,7 +68,9 @@ public class BookRepositoryImpl implements BookRepository{
     public Book findById(Long id) {
         Map<String, Object> map = Map.of(
                 "id", id);
-        Book rv = jdbcOperations.queryForObject("SELECT * FROM books LEFT JOIN authors ON books.author_id = authors.id  LEFT JOIN " +
+        Book rv = jdbcOperations.queryForObject("SELECT books.id, books.name, books.author_id, books.genre_id, genres.name, " +
+                        "authors.first_name, authors.last_name " +
+                        "FROM books LEFT JOIN authors ON books.author_id = authors.id  LEFT JOIN " +
                         "genres ON books.genre_id = genres.id WHERE books.id = :id",
                 new MapSqlParameterSource(map),
                 new BookRawMapper());
@@ -77,9 +107,8 @@ public class BookRepositoryImpl implements BookRepository{
     public int deleteById(Long id) {
         Map<String, Object> map = Map.of(
                 "id", id);
-        GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         return jdbcOperations.update("delete from books where id = :id",
-                new MapSqlParameterSource(map), keyHolder);
+                new MapSqlParameterSource(map));
     }
 
     @Override
@@ -97,22 +126,18 @@ public class BookRepositoryImpl implements BookRepository{
             map.put("genre_id", null);
         }
         map.put("id", b.getId());
-        GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         return jdbcOperations.update("update books set name = :name, author_id = :author_id, genre_id = :genre_id" +
                 " where id = :id",
-                new MapSqlParameterSource(map), keyHolder);
+                new MapSqlParameterSource(map));
     }
 
     private static class BookRawMapper implements RowMapper<Book> {
 
         @Override
         public Book mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Genre genre = Genre.builder()
-                    .id(rs.getLong("genres.id"))
-                    .name(rs.getString("genres.name"))
-                    .build();
+            Genre genre = new  Genre(rs.getLong("books.genre_id"),rs.getString("genres.name"));
             Author author = Author.builder()
-                    .id(rs.getLong("authors.id"))
+                    .id(rs.getLong("books.author_id"))
                     .firstName(rs.getString("authors.first_name"))
                     .lastName(rs.getString("authors.last_name"))
                     .build();

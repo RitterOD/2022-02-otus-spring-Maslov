@@ -15,11 +15,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @JdbcTest
 @Import(AuthorRepositoryImpl.class)
-@Sql({"classpath:test-schema.sql", "classpath:test-data.sql"})
+//@Sql({"classpath:test-schema.sql", "classpath:test-data.sql"})
 class AuthorRepositoryImplTest {
 
     @Autowired
-    AuthorRepository authorRepository;
+    private AuthorRepository authorRepository;
 
     private final int AUTHOR_AMOUNT = 5;
     private final String NEW_AUTHOR_FIRST_NAME = "ALEXANDER";

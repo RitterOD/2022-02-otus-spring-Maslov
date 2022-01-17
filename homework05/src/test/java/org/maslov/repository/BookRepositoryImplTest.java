@@ -14,17 +14,17 @@ import java.util.List;
 
 @JdbcTest
 @Import({BookRepositoryImpl.class, AuthorRepositoryImpl.class, GenreRepositoryImpl.class})
-@Sql({"classpath:test-schema.sql", "classpath:test-data.sql"})
+//@Sql({"classpath:test-schema.sql", "classpath:test-data.sql"})
 class BookRepositoryImplTest {
 
     @Autowired
-    BookRepository bookRepository;
+    private BookRepository bookRepository;
 
     @Autowired
-    AuthorRepository authorRepository;
+    private AuthorRepository authorRepository;
 
     @Autowired
-    GenreRepository genreRepository;
+    private GenreRepository genreRepository;
 
     public static int INITIAL_NUMBER_OF_BOOKS = 5;
 
