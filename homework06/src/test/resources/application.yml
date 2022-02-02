@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+
+
+
+  h2:
+    console:
+      path: /h2-console
+      settings:
+        web-allow-others: true
+      enabled: true
+  main:
+    allow-circular-references: true
+  sql:
+    init:
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:test-data.sql
+server:
+  port: 8080
